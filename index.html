@@ -116,7 +116,7 @@ input:focus,select:focus,button:focus-visible{outline:2px solid var(--gold);outl
     <form id="fIntro" class="card" style="display:flex;flex-direction:column;gap:16px">
       <div>
         <h2>Maklumat Calon</h2>
-        <p class="muted">Terdapat 28 soalan. Bagi setiap soalan, pilih satu jawapan yang <b style="color:var(--S)">paling seperti</b> diri anda, kemudian satu yang <b style="color:var(--D)">paling tidak seperti</b> diri anda. Tiada jawapan betul atau salah. Anggaran masa 8 minit.</p>
+        <p class="muted">Terdapat 28 soalan. Pilih satu jawapan yang paling menggambarkan diri anda. Tiada jawapan betul atau salah, jawab ikut naluri pertama. Anggaran masa 5 minit.</p>
       </div>
       <div>
         <label for="iNama">Nama penuh</label>
@@ -159,7 +159,6 @@ input:focus,select:focus,button:focus-visible{outline:2px solid var(--gold);outl
     <div class="qmeta"><span id="qNum">SOALAN 1 / 28</span><span id="qName"></span></div>
     <div class="progress" style="margin-top:10px"><i id="qBar" style="width:0"></i></div>
     <div class="qtext" id="qText"></div>
-    <div class="stage" id="qStage"><i class="m">1 · Paling seperti saya</i><i class="l">2 · Paling tidak seperti saya</i></div>
     <div class="opts" id="qOpts"></div>
     <div class="row" style="margin-top:18px;justify-content:space-between">
       <button class="btn ghost" id="bBack" type="button">Kembali</button>
@@ -189,7 +188,7 @@ input:focus,select:focus,button:focus-visible{outline:2px solid var(--gold);outl
         <div class="bars" id="rBars"></div>
         <div id="rFit" class="fit"></div>
         <div id="rCons" class="fit"></div>
-        <p class="muted" style="font-size:12px">Skor intensiti 0 hingga 100. Nilai 50 ialah sederhana, atas 50 ialah ciri yang menonjol. Keputusan ini sebagai panduan dan perlu digabungkan dengan temu duga.</p>
+        <p class="muted" style="font-size:12px">Peratus menunjukkan kekerapan setiap jenis dipilih (jumlah 100%). Keputusan ini sebagai panduan dan perlu digabungkan dengan temu duga.</p>
       </div>
     </div>
 
@@ -304,7 +303,7 @@ const ITEMS=[];const baseIdx={};
 Q.forEach(([q,o],i)=>{baseIdx[i]=ITEMS.length;ITEMS.push({q,o});CHECKS.filter(c=>c.after===i).forEach(c=>ITEMS.push({q:c.q,o:c.o,ref:c.ref}))});
 
 const $=id=>document.getElementById(id);
-let cand={}, answers=[], shuffled=[], qi=0; // answers[i]={m,l}
+let cand={}, answers=[], shuffled=[], qi=0; // answers[i]={m}
 
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function show(id,lbl){["scrIntro","scrQuiz","scrResult"].forEach(s=>$(s).classList.toggle("hidden",s!==id));$("stepLbl").textContent=lbl;window.scrollTo(0,0)}
@@ -313,7 +312,7 @@ $("fIntro").addEventListener("submit",e=>{
   e.preventDefault();
   isSample=false;
   cand={nama:$("iNama").value.trim(),jab:$("iJab").value,jaw:$("iJaw").value.trim()};
-  answers=ITEMS.map(()=>({m:null,l:null}));
+  answers=ITEMS.map(()=>({m:null}));
   shuffled=ITEMS.map(()=>shuffle(ORDER));
   qi=0; $("qName").textContent=cand.nama.toUpperCase();
   show("scrQuiz","Penilaian"); renderQ();
@@ -323,9 +322,9 @@ $("bSample").onclick=()=>{
   isSample=true;
   cand={nama:"Ali Bin Abu (contoh)",jab:"Sales",jaw:"Eksekutif Jualan"};
   const pat="IIDISIIDICIIDSIIIDIISIDI";
-  const base=pat.split("").map(m=>({m,l:m==="C"?"S":"C"}));
+  const base=pat.split("").map(m=>({m}));
   answers=ITEMS.map((it,i)=>it.ref!==undefined?{...base[it.ref]}:base[ITEMS.slice(0,i+1).filter(x=>x.ref===undefined).length-1]);
-  answers[baseIdx[14]]={m:"D",l:"C"}; // satu percanggahan kecil, realistik
+  answers[baseIdx[14]]={m:"D"}; // satu percanggahan kecil, realistik
   renderResult();
 };
 
@@ -334,44 +333,31 @@ function renderQ(){
   $("qNum").textContent=`SOALAN ${qi+1} / ${ITEMS.length}`;
   $("qBar").style.width=(qi/ITEMS.length*100)+"%";
   $("qText").textContent=it.q;
-  const stage=a.m?"l":"m";
-  $("qStage").querySelector(".m").classList.toggle("on",stage==="m");
-  $("qStage").querySelector(".l").classList.toggle("on",stage==="l");
   $("qOpts").innerHTML="";
   shuffled[qi].forEach((k,i)=>{
-    const b=document.createElement("button");b.type="button";
-    b.className="opt"+(a.m===k?" most":"");
-    b.innerHTML=`<kbd>${i+1}</kbd><span></span>`+(a.m===k?`<em class="badge" style="background:var(--S)">PALING</em>`:"");
-    b.querySelector("span").textContent=it.o[k];
-    if(a.m===k) b.disabled=true;
+    const b=document.createElement("button");b.type="button";b.className="opt"+(a.m===k?" sel":"");
+    b.innerHTML=`<kbd>${i+1}</kbd><span></span>`;b.querySelector("span").textContent=it.o[k];
     b.onclick=()=>pick(k);$("qOpts").appendChild(b);
   });
-  $("bBack").style.visibility=(qi||a.m)?"visible":"hidden";
+  $("bBack").style.visibility=qi?"visible":"hidden";
 }
 function pick(k){
-  const a=answers[qi];
-  if(!a.m){a.m=k;renderQ();return}
-  if(k===a.m)return;
-  a.l=k;
-  if(qi<ITEMS.length-1){qi++;answers[qi]={m:null,l:null};renderQ()}else{$("qBar").style.width="100%";renderResult()}
+  answers[qi].m=k;
+  if(qi<ITEMS.length-1){qi++;renderQ()}else{$("qBar").style.width="100%";renderResult()}
 }
-$("bBack").onclick=()=>{
-  const a=answers[qi];
-  if(a.m){a.m=null;a.l=null;renderQ();return}
-  if(qi>0){qi--;answers[qi]={m:null,l:null};renderQ()}
-};
+$("bBack").onclick=()=>{if(qi>0){qi--;renderQ()}};
 document.addEventListener("keydown",e=>{
   if($("scrQuiz").classList.contains("hidden"))return;
   const n=+e.key; if(n>=1&&n<=4) pick(shuffled[qi][n-1]);
 });
 
 function compute(){
-  const M={D:0,I:0,S:0,C:0},L={D:0,I:0,S:0,C:0},n=answers.length;
-  answers.forEach(a=>{M[a.m]++;L[a.l]++});
-  const p={}; ORDER.forEach(k=>p[k]=Math.round((M[k]-L[k]+n)/(2*n)*100));
+  const M={D:0,I:0,S:0,C:0},n=answers.length;
+  answers.forEach(a=>{M[a.m]++});
+  const p={}; ORDER.forEach(k=>p[k]=Math.round(M[k]/n*100));
   // konsisten: bandingkan soalan semakan dengan soalan asal
   let match=0,tot=0;
-  ITEMS.forEach((it,i)=>{if(it.ref===undefined)return;const o=answers[baseIdx[it.ref]],c=answers[i];tot+=2;if(o.m===c.m)match++;if(o.l===c.l)match++});
+  ITEMS.forEach((it,i)=>{if(it.ref===undefined)return;const o=answers[baseIdx[it.ref]],c=answers[i];tot++;if(o.m===c.m)match++});
   const cons={match,tot};
   const raw=DEPTS.map(d=>{let s=0,w=0;for(const k in d.w){s+=d.w[k]*p[k];w+=d.w[k]}return s/w});
   const mx=Math.max(...raw)||1;
@@ -409,7 +395,7 @@ function radarSVG(dept){
 
 function quadSVG(p){
   const W=360,H=300,cx=W/2,cy=H/2;
-  const cl=v=>Math.max(-1,Math.min(1,v));const x=cl(((p.I+p.S)-(p.D+p.C))/120), y=cl(((p.D+p.I)-(p.S+p.C))/120);
+  const cl=v=>Math.max(-1,Math.min(1,v));const x=cl(((p.I+p.S)-(p.D+p.C))/100), y=cl(((p.D+p.I)-(p.S+p.C))/100);
   const px=cx+x*130, py=cy-y*110;
   const q=(tx,ty,t,c,anc)=>`<text x="${tx}" y="${ty}" text-anchor="${anc}" fill="${c}" font-family="Bricolage Grotesque" font-weight="700" font-size="15">${t}</text>`;
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Peta kuadran DISC">`;
@@ -438,7 +424,7 @@ function renderResult(){
   $("rPill").style.cssText=`background:${a.hex}22;color:${a.hex};border:1px solid ${a.hex}55`;
   $("rType").innerHTML=`${a.bird} <span style="color:var(--muted);font-weight:600">dengan sokongan</span> ${b.bird}`;
   $("rDesc").textContent=a.desc;
-  $("rBars").innerHTML=rank.map(k=>`<div class="bar"><span>${T[k].disc}</span><div class="t"><i style="width:${p[k]}%;background:${T[k].color}"></i></div><span class="v">${p[k]}</span></div>`).join("");
+  $("rBars").innerHTML=rank.map(k=>`<div class="bar"><span>${T[k].disc}</span><div class="t"><i style="width:${p[k]}%;background:${T[k].color}"></i></div><span class="v">${p[k]}%</span></div>`).join("");
 
   const sorted=dept.slice().sort((x,y)=>y.score-x.score);
   const top=sorted[0], second=sorted[1];
@@ -469,7 +455,7 @@ function renderResult(){
   </div>`).join("");
 
   $("rTypes").innerHTML=rank.map(k=>{const t=T[k];return `<div class="type" style="--c:${t.hex}">
-    <div class="hd"><b>${t.disc} + ${t.bird}</b><span>${p[k]}</span></div>
+    <div class="hd"><b>${t.disc} + ${t.bird}</b><span>${p[k]}%</span></div>
     <p>${t.desc}</p>
     <div class="kc"><div><h4>KELEBIHAN</h4><ul>${t.plus.map(x=>`<li>${x}</li>`).join("")}</ul></div>
     <div><h4>CABARAN</h4><ul>${t.minus.map(x=>`<li>${x}</li>`).join("")}</ul></div></div></div>`}).join("");
@@ -481,13 +467,13 @@ function renderResult(){
     Admin:dept[0].score, Sales:dept[1].score, Marketing:dept[2].score, Operation:dept[3].score, Finance:dept[4].score, HR:dept[5].score,
     cadangan1:top.n, cadangan2:second.n, kesesuaian:(typeof fitTxt!=="undefined"&&fitTxt)||"-",
     konsisten:`${cons.match}/${cons.tot} (${cl[0]})`,
-    jawapan:answers.map(x=>x.m+x.l).join(" ")
+    jawapan:answers.map(x=>x.m).join("")
   });
   summary=`Asesmen Bakat Kerjaya
 Calon: ${cand.nama}
 Permohonan: ${$("rJaw").textContent}
 Profil: ${a.disc} + ${a.bird} (sokongan ${b.bird})
-DISC: ${rank.map(k=>`${k} ${p[k]}`).join(" · ")}
+DISC: ${rank.map(k=>`${k} ${p[k]}%`).join(" · ")}
 Roda: ${sorted.map(d=>`${d.n} ${d.score}`).join(" · ")}
 Cadangan: ${top.n}, kemudian ${second.n}
 Konsisten: ${cons.match}/${cons.tot} (${cl[0]})`;
