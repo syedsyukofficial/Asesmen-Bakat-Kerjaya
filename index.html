@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asesmen Bakat Kerjaya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0b0a07; --panel:#15130d; --panel2:#1d1a11; --line:#2e2a1c;
+  --ink:#f4efe0; --muted:#a39d88; --gold:#f2b705; --gold-dim:#8a6a06;
+  --D:#e5484d; --I:#f2b705; --S:#46b37a; --C:#3e9bd6;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"DM Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--body);padding-inline:16px;padding-block:24px 48px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header.brand{background:var(--gold);color:#111;border-radius:14px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header.brand h1{font:800 clamp(20px,3.4vw,28px)/1.1 var(--display);margin:0;letter-spacing:-.01em}
+header.brand small{font:700 11px var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+h2{font:700 22px/1.2 var(--display);margin:0 0 6px;text-wrap:balance}
+h3{font:700 13px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
+p{margin:0}
+.muted{color:var(--muted)}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+input,select{width:100%;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.btn{appearance:none;border:0;border-radius:10px;padding:13px 20px;font:700 15px var(--body);cursor:pointer;background:var(--gold);color:#111}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--gold)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.intro-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}
+@media(max-width:760px){.intro-grid{grid-template-columns:1fr}}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lg{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:10px;background:var(--panel2)}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;margin-top:5px}
+.lg b{display:block;font-size:14px}
+.lg span{font-size:12.5px;color:var(--muted)}
+/* quiz */
+.progress{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--gold);transition:width .3s}
+.qmeta{display:flex;justify-content:space-between;font:500 12px var(--mono);color:var(--muted);letter-spacing:.06em}
+.qtext{font:700 clamp(19px,2.6vw,24px)/1.3 var(--display);margin:18px 0 18px;text-wrap:balance}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:14px 16px;font:500 15px var(--body);cursor:pointer;display:flex;gap:12px;align-items:center}
+.opt:hover{border-color:var(--gold)}
+.opt.sel{border-color:var(--gold);background:#2a220a}
+.opt kbd{font:700 12px var(--mono);border:1px solid var(--line);border-radius:6px;padding:2px 7px;color:var(--muted)}
+/* result */
+.cand{text-align:center;padding-block:6px}
+.cand h2{font-size:clamp(24px,4vw,32px)}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:820px){.hero{grid-template-columns:1fr}}
+.chart svg{width:100%;height:auto;display:block;max-width:100%}
+.verdict{display:flex;flex-direction:column;gap:14px}
+.pill{display:inline-block;font:700 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:99px}
+.big{font:800 clamp(26px,4vw,36px)/1.05 var(--display);letter-spacing:-.01em}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:130px 1fr 48px;gap:10px;align-items:center;font-size:13.5px}
+.bar .t{height:10px;background:var(--panel2);border-radius:99px;overflow:hidden}
+.bar .t i{display:block;height:100%;border-radius:99px}
+.bar .v{font:700 13px var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.depts{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.dept{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.dept.top{border-color:var(--gold)}
+.dept .hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.dept .hd b{font:700 17px var(--display)}
+.dept .hd span{font:700 15px var(--mono);color:var(--gold);font-variant-numeric:tabular-nums}
+.dept small{color:var(--muted);font-size:12.5px}
+.tag{font:600 11px var(--mono);letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.types{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.types{grid-template-columns:1fr}}
+.type{background:var(--panel2);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;border-top:3px solid var(--c)}
+.type .hd{display:flex;justify-content:space-between;align-items:baseline}
+.type .hd b{font:700 17px var(--display)}
+.type .hd span{font:700 16px var(--mono);color:var(--c);font-variant-numeric:tabular-nums}
+.type p{font-size:13.5px;color:var(--muted)}
+.kc{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px}
+.kc h4{margin:0 0 4px;font:700 11px var(--mono);letter-spacing:.1em;color:var(--c)}
+.kc ul{margin:0;padding-left:16px;display:grid;gap:3px}
+.note{font-size:13px;background:var(--panel2);border-radius:10px;padding:12px 14px;border:1px dashed var(--line)}
+.fit{border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.stage{display:flex;gap:10px;align-items:center;margin:-6px 0 14px;font:700 12px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.stage i{font-style:normal;padding:5px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.stage i.on.m{background:var(--S);border-color:var(--S);color:#111}
+.stage i.on.l{background:var(--D);border-color:var(--D);color:#111}
+.opt.most{border-color:var(--S);background:#12281c}
+.opt.least{border-color:var(--D);background:#2a1213}
+.opt:disabled{cursor:default}
+.opt .badge{margin-left:auto;font:700 11px var(--mono);letter-spacing:.06em;padding:3px 8px;border-radius:99px;color:#111}
+.stack{display:flex;flex-direction:column;gap:20px}
+.hidden{display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="brand">
+    <div>
+      <h1>Asesmen Bakat Kerjaya</h1>
+      <small>DISC × DOPE × 6 Roda Pengurusan</small>
+    </div>
+    <small id="stepLbl">Maklumat Calon</small>
+  </header>
+
+  <!-- INTRO -->
+  <section id="scrIntro" class="intro-grid">
+    <form id="fIntro" class="card" style="display:flex;flex-direction:column;gap:16px">
+      <div>
+        <h2>Maklumat Calon</h2>
+        <p class="muted">Terdapat 28 soalan. Bagi setiap soalan, pilih satu jawapan yang <b style="color:var(--S)">paling seperti</b> diri anda, kemudian satu yang <b style="color:var(--D)">paling tidak seperti</b> diri anda. Tiada jawapan betul atau salah. Anggaran masa 8 minit.</p>
+      </div>
+      <div>
+        <label for="iNama">Nama penuh</label>
+        <input id="iNama" required placeholder="cth. Ali Bin Abu">
+      </div>
+      <div class="grid2">
+        <div>
+          <label for="iJab">Jabatan dipohon</label>
+          <select id="iJab">
+            <option value="">Belum pasti</option>
+            <option>Admin</option><option>HR</option><option>Finance</option>
+            <option>Sales</option><option>Marketing</option><option>Operation</option>
+          </select>
+        </div>
+        <div>
+          <label for="iJaw">Jawatan dipohon</label>
+          <input id="iJaw" placeholder="cth. Eksekutif Jualan">
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn" type="submit">Mula Penilaian</button>
+        <button class="btn ghost" type="button" id="bSample">Lihat contoh keputusan</button>
+      </div>
+    </form>
+
+    <aside class="card" style="display:flex;flex-direction:column;gap:14px">
+      <h3>Bagaimana ia dipetakan</h3>
+      <div class="legend">
+        <div class="lg"><i class="dot" style="background:var(--D)"></i><div><b>Eagle · Dominance</b><span>Admin, sebahagian HR</span></div></div>
+        <div class="lg"><i class="dot" style="background:var(--I)"></i><div><b>Peacock · Influence</b><span>Sales, Marketing</span></div></div>
+        <div class="lg"><i class="dot" style="background:var(--C)"></i><div><b>Owl · Conscientious</b><span>Finance, sebahagian HR</span></div></div>
+        <div class="lg"><i class="dot" style="background:var(--S)"></i><div><b>Dove · Steadiness</b><span>Operation, sokongan Marketing</span></div></div>
+      </div>
+      <p class="muted" style="font-size:13px">Sebelah kiri roda (Admin, HR, Finance) ialah <b style="color:var(--ink)">Urus Bisnes</b>. Sebelah kanan (Sales, Marketing, Operation) ialah <b style="color:var(--ink)">Buat Bisnes</b>. Skor DISC calon ditimbang ke setiap jabatan untuk cadangan penempatan.</p>
+    </aside>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="scrQuiz" class="card hidden">
+    <div class="qmeta"><span id="qNum">SOALAN 1 / 28</span><span id="qName"></span></div>
+    <div class="progress" style="margin-top:10px"><i id="qBar" style="width:0"></i></div>
+    <div class="qtext" id="qText"></div>
+    <div class="stage" id="qStage"><i class="m">1 · Paling seperti saya</i><i class="l">2 · Paling tidak seperti saya</i></div>
+    <div class="opts" id="qOpts"></div>
+    <div class="row" style="margin-top:18px;justify-content:space-between">
+      <button class="btn ghost" id="bBack" type="button">Kembali</button>
+      <span class="muted" style="font-size:12.5px">Tekan 1–4 pada papan kekunci untuk memilih</span>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="scrResult" class="stack hidden">
+    <div class="card cand">
+      <h2 id="rNama"></h2>
+      <p class="muted">Permohonan: <b id="rJaw" style="color:var(--gold)"></b> · <span id="rDate"></span></p>
+    </div>
+
+    <div class="hero">
+      <div class="card chart">
+        <h3>Plotting Roda Pengurusan</h3>
+        <div id="radar"></div>
+      </div>
+      <div class="card verdict">
+        <h3>Profil Utama</h3>
+        <div>
+          <span class="pill" id="rPill"></span>
+          <div class="big" id="rType" style="margin-top:8px"></div>
+          <p class="muted" id="rDesc" style="margin-top:6px"></p>
+        </div>
+        <div class="bars" id="rBars"></div>
+        <div id="rFit" class="fit"></div>
+        <div id="rCons" class="fit"></div>
+        <p class="muted" style="font-size:12px">Skor intensiti 0 hingga 100. Nilai 50 ialah sederhana, atas 50 ialah ciri yang menonjol. Keputusan ini sebagai panduan dan perlu digabungkan dengan temu duga.</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Peta Kuadran DISC</h3>
+        <div id="quad" class="chart"></div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:12px">
+        <h3>Cadangan Penempatan</h3>
+        <div id="rTop"></div>
+        <div class="note" id="rManage"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Padanan 6 Jabatan</h3>
+      <p class="muted" style="font-size:13px;margin-bottom:12px">Skor relatif: jabatan paling padan = 100. KPI diambil dari pecahan roda (Human, Capital, System).</p>
+      <div class="depts" id="rDepts"></div>
+    </div>
+
+    <div class="card">
+      <h3>Keputusan DISC + DOPE</h3>
+      <div class="types" id="rTypes"></div>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="bCopy" type="button">Salin ringkasan</button>
+      <button class="btn ghost" id="bNew" type="button">Penilaian calon baru</button>
+      <span class="muted" id="copyMsg" style="font-size:13px"></span>
+      <span class="muted" id="sheetMsg" style="font-size:13px"></span>
+    </div>
+    <textarea id="copyBox" class="hidden" readonly style="width:100%;height:160px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px;font:13px var(--mono)"></textarea>
+  </section>
+</div>
+
+<script>
+/* ===== TETAPAN GOOGLE SHEET =====
+   Tampal URL Web App dari Google Apps Script di antara tanda petik.
+   Biarkan kosong ("") jika tidak mahu hantar ke Sheet. */
+const SHEET_URL = "";
+/* ================================ */
+const T = {
+  D:{key:"D",bird:"Eagle",disc:"Dominance",color:"var(--D)",hex:"#e5484d",
+     desc:"Pemimpin berorientasikan hasil, berani, pantas membuat keputusan dan gemar mencabar diri.",
+     plus:["Berinisiatif & berdikari","Tahan tekanan & pantas","Berani ambil risiko","Fokus pada matlamat"],
+     minus:["Kadang terlalu kasar","Kurang sabar dengan proses","Boleh mendominasi pasukan","Mudah abaikan perasaan orang"],
+     manage:"Beri sasaran jelas dan autoriti, bukan arahan terperinci. Nilai berdasarkan hasil. Pasangkan dengan Dove atau Owl untuk imbangi kelajuan dengan ketelitian."},
+  I:{key:"I",bird:"Peacock",disc:"Influence",color:"var(--I)",hex:"#f2b705",
+     desc:"Ekstrovert, optimis, mudah berkomunikasi dan pandai mempengaruhi serta mengeratkan hubungan.",
+     plus:["Komunikasi & rangkaian luas","Memotivasikan orang sekeliling","Kreatif & berinovasi","Senang menyesuaikan diri"],
+     minus:["Mudah terganggu & tidak konsisten","Kurang minat pada rutin/detail","Cenderung berjanji lebih","Emosi boleh mempengaruhi fokus"],
+     manage:"Beri pengiktirafan terbuka dan ruang berinteraksi. Sediakan checklist dan tarikh akhir yang jelas supaya idea menjadi tindakan."},
+  S:{key:"S",bird:"Dove",disc:"Steadiness",color:"var(--S)",hex:"#46b37a",
+     desc:"Pendengar setia, sabar, konsisten dan mengutamakan keharmonian serta kesetiaan dalam pasukan.",
+     plus:["Setia & boleh diharap","Pendengar yang empati","Menjaga keharmonian","Stabil & tenang"],
+     minus:["Sukar tolak permintaan","Berat menerima perubahan","Elak konflik & keputusan","Kadang terlalu pasif"],
+     manage:"Terangkan perubahan awal dan beri masa menyesuaikan diri. Wujudkan SOP dan rutin yang stabil. Tanya pendapatnya secara peribadi."},
+  C:{key:"C",bird:"Owl",disc:"Conscientiousness",color:"var(--C)",hex:"#3e9bd6",
+     desc:"Teliti, logik, sistematik dan mengutamakan kualiti serta ketepatan dalam setiap tugasan.",
+     plus:["Analitis & teliti","Disiplin & teratur","Kualiti kerja tinggi","Mampu menyelesaikan masalah sistem"],
+     minus:["Perfeksionis & kritikal","Terlalu analisis, lambat bertindak","Kekangan fleksibiliti","Kadang ketinggalan gambaran besar"],
+     manage:"Beri data, standard dan prosedur bertulis. Elak tekanan keputusan segera tanpa maklumat. Hargai ketepatannya secara spesifik."}
+};
+const ORDER=["D","I","S","C"];
+
+// Jabatan: sudut ikut roda pengurusan (kiri = Urus, kanan = Buat)
+const DEPTS=[
+  {n:"Admin",     side:"Urus Bisnes", el:"System",  w:{D:1,C:.4},        kpi:"Error rate, Date on Time (DOT)", ang:-120},
+  {n:"Sales",     side:"Buat Bisnes", el:"Capital", w:{I:1,D:.4},        kpi:"Jualan RM bulanan (cth. Apr 100k → Mei 110k)", ang:-60},
+  {n:"Marketing", side:"Buat Bisnes", el:"Human",   w:{I:.7,S:.4},       kpi:"Customer reach & leads", ang:0},
+  {n:"Operation", side:"Buat Bisnes", el:"System",  w:{S:1,C:.3},        kpi:"Masa proses, kapasiti %", ang:60},
+  {n:"Finance",   side:"Urus Bisnes", el:"Capital", w:{C:1,S:.2},        kpi:"Cashflow, hutang, % spend", ang:120},
+  {n:"HR",        side:"Urus Bisnes", el:"Human",   w:{D:.5,C:.5,S:.4},  kpi:"KPI team, staff turnover", ang:180}
+];
+
+const Q=[
+ ["Apabila menerima tugasan baru, saya biasanya...",{D:"Terus bertindak dan tetapkan sasaran",I:"Kongsi idea dengan rakan dan bina semangat",S:"Fahami dulu kesannya kepada pasukan",C:"Kaji arahan dan butiran dengan teliti"}],
+ ["Dalam mesyuarat, saya lebih cenderung untuk...",{D:"Memimpin perbincangan ke arah keputusan",I:"Menceriakan suasana dan beri banyak idea",S:"Mendengar dan menyokong pandangan orang lain",C:"Bertanya soalan untuk dapatkan fakta"}],
+ ["Jika berlaku konflik dalam pasukan, saya...",{D:"Selesaikan dengan tegas dan cepat",I:"Redakan keadaan melalui komunikasi",S:"Jaga hubungan supaya keadaan tidak tegang",C:"Kenal pasti punca berdasarkan data"}],
+ ["Orang lain selalu menggambarkan saya sebagai...",{D:"Tegas dan berani",I:"Ramah dan bersemangat",S:"Sabar dan boleh diharap",C:"Teliti dan berhati-hati"}],
+ ["Perkara yang paling memotivasikan saya ialah...",{D:"Cabaran dan kemenangan",I:"Pengiktirafan dan pujian",S:"Suasana kerja yang stabil dan harmoni",C:"Kerja berkualiti tanpa kesilapan"}],
+ ["Semasa tekanan kerja tinggi, saya...",{D:"Jadi lebih mendesak dan mengawal keadaan",I:"Banyak bercakap dan mencari sokongan",S:"Diam dan ikut arus",C:"Jadi lebih kritikal dan menarik diri"}],
+ ["Cara saya membuat keputusan...",{D:"Cepat, berdasarkan naluri dan hasil",I:"Berdasarkan perasaan dan pandangan orang",S:"Selepas berbincang dan semua pihak selesa",C:"Selepas menganalisis data yang cukup"}],
+ ["Persekitaran kerja yang ideal bagi saya...",{D:"Bebas dan ada autoriti",I:"Meriah dengan ramai orang",S:"Tenang dengan rutin yang jelas",C:"Tersusun dengan prosedur yang jelas"}],
+ ["Apabila berlaku perubahan mendadak, saya...",{D:"Nampak peluang dan ambil alih",I:"Teruja dengan perkara baru",S:"Perlukan masa untuk menyesuaikan diri",C:"Mahu tahu sebab dan butiran perubahan"}],
+ ["Kekuatan utama saya dalam pasukan...",{D:"Menggerakkan orang untuk capai sasaran",I:"Membina semangat dan jaringan",S:"Menjadi penyokong yang setia",C:"Memastikan kualiti dan ketepatan"}],
+ ["Perkara yang paling saya tidak suka...",{D:"Kelambatan dan sikap tidak tegas",I:"Kerja seorang diri yang membosankan",S:"Konflik dan perubahan tiba-tiba",C:"Kerja cincai dan tidak tepat"}],
+ ["Ketika mempromosikan sesuatu, saya...",{D:"Terus ke tawaran dan tutup jualan",I:"Bercerita dan bina keterujaan",S:"Bina kepercayaan dengan sabar",C:"Terangkan spesifikasi dan fakta"}],
+ ["Dalam mengurus masa, saya...",{D:"Fokus pada perkara yang paling beri hasil",I:"Fleksibel mengikut peluang",S:"Ikut rutin yang konsisten",C:"Ikut jadual yang terperinci"}],
+ ["Apabila ditegur oleh ketua, saya...",{D:"Pertahankan pendirian saya",I:"Rasa terkesan tetapi cepat ceria semula",S:"Terima dengan tenang walaupun terasa",C:"Minta bukti dan penjelasan"}],
+ ["Gaya komunikasi saya...",{D:"Terus-terang dan ringkas",I:"Ekspresif dan penuh cerita",S:"Lembut dan mesra",C:"Tepat dan berfakta"}],
+ ["Jika diberi projek besar, saya akan...",{D:"Ambil tanggungjawab memimpin",I:"Kumpul orang dan bina pasukan",S:"Pastikan setiap orang tahu peranan masing-masing",C:"Rancang langkah demi langkah dengan terperinci"}],
+ ["Hujung minggu yang ideal...",{D:"Aktiviti yang mencabar atau kompetitif",I:"Bersosial dengan ramai kawan",S:"Bersama keluarga di rumah",C:"Membaca atau hobi yang mendalam"}],
+ ["Apabila rakan sekerja lambat siapkan tugasan, saya...",{D:"Desak supaya disiapkan segera",I:"Beri semangat dan motivasi",S:"Tawarkan bantuan",C:"Semak di mana proses bermasalah"}],
+ ["Nilai yang paling penting bagi saya...",{D:"Hasil",I:"Hubungan dan keseronokan",S:"Kesetiaan dan keharmonian",C:"Ketepatan dan integriti"}],
+ ["Peranan yang paling saya gemari...",{D:"Ketua atau pembuat keputusan",I:"Jurucakap atau wajah pasukan",S:"Penyelaras atau penyokong",C:"Penganalisis atau penyemak"}],
+ ["Ketika berdepan risiko, saya...",{D:"Berani mengambil risiko",I:"Optimis semuanya akan okay",S:"Pilih jalan yang selamat",C:"Kira kebarangkalian terlebih dahulu"}],
+ ["Cara saya mempengaruhi orang...",{D:"Melalui ketegasan dan visi",I:"Melalui karisma dan semangat",S:"Melalui kepercayaan dan ketulusan",C:"Melalui logik dan bukti"}],
+ ["Saya cepat hilang fokus jika...",{D:"Tiada cabaran",I:"Tiada interaksi dengan orang",S:"Keadaan terlalu kelam-kabut",C:"Kerja tiada standard yang jelas"}],
+ ["Kejayaan bagi saya bermaksud...",{D:"Menang dan capai sasaran",I:"Disukai dan dikenali ramai",S:"Pasukan gembira dan stabil",C:"Kerja yang sempurna dan tepat"}]
+];
+
+// Soalan semakan konsisten: maksud sama dengan soalan asal (indeks ref)
+const CHECKS=[
+ {ref:3, after:10, q:"Kawan rapat akan berkata saya seorang yang...",o:{D:"Suka memimpin dan tegas",I:"Periang dan pandai bergaul",S:"Penyabar dan setia",C:"Cermat dan teratur"}},
+ {ref:6, after:15, q:"Bila perlu membuat pilihan penting, saya...",o:{D:"Pilih cepat dan tanggung risikonya",I:"Ikut gerak hati dan pendapat kawan",S:"Tunggu sehingga semua bersetuju",C:"Kumpul maklumat dan bandingkan dahulu"}},
+ {ref:14,after:20, q:"Apabila bercakap dengan orang, saya...",o:{D:"Terus ke pokok persoalan",I:"Suka berbual panjang dan bercerita",S:"Bercakap dengan tenang dan berlapik",C:"Pilih perkataan dengan tepat"}},
+ {ref:19,after:23, q:"Dalam satu kumpulan, saya paling selesa menjadi...",o:{D:"Orang yang membuat keputusan akhir",I:"Orang yang menghidupkan suasana",S:"Orang yang membantu di belakang tabir",C:"Orang yang menyemak butiran"}}
+];
+const ITEMS=[];const baseIdx={};
+Q.forEach(([q,o],i)=>{baseIdx[i]=ITEMS.length;ITEMS.push({q,o});CHECKS.filter(c=>c.after===i).forEach(c=>ITEMS.push({q:c.q,o:c.o,ref:c.ref}))});
+
+const $=id=>document.getElementById(id);
+let cand={}, answers=[], shuffled=[], qi=0; // answers[i]={m,l}
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function show(id,lbl){["scrIntro","scrQuiz","scrResult"].forEach(s=>$(s).classList.toggle("hidden",s!==id));$("stepLbl").textContent=lbl;window.scrollTo(0,0)}
+
+$("fIntro").addEventListener("submit",e=>{
+  e.preventDefault();
+  isSample=false;
+  cand={nama:$("iNama").value.trim(),jab:$("iJab").value,jaw:$("iJaw").value.trim()};
+  answers=ITEMS.map(()=>({m:null,l:null}));
+  shuffled=ITEMS.map(()=>shuffle(ORDER));
+  qi=0; $("qName").textContent=cand.nama.toUpperCase();
+  show("scrQuiz","Penilaian"); renderQ();
+});
+let isSample=false;
+$("bSample").onclick=()=>{
+  isSample=true;
+  cand={nama:"Ali Bin Abu (contoh)",jab:"Sales",jaw:"Eksekutif Jualan"};
+  const pat="IIDISIIDICIIDSIIIDIISIDI";
+  const base=pat.split("").map(m=>({m,l:m==="C"?"S":"C"}));
+  answers=ITEMS.map((it,i)=>it.ref!==undefined?{...base[it.ref]}:base[ITEMS.slice(0,i+1).filter(x=>x.ref===undefined).length-1]);
+  answers[baseIdx[14]]={m:"D",l:"C"}; // satu percanggahan kecil, realistik
+  renderResult();
+};
+
+function renderQ(){
+  const it=ITEMS[qi], a=answers[qi];
+  $("qNum").textContent=`SOALAN ${qi+1} / ${ITEMS.length}`;
+  $("qBar").style.width=(qi/ITEMS.length*100)+"%";
+  $("qText").textContent=it.q;
+  const stage=a.m?"l":"m";
+  $("qStage").querySelector(".m").classList.toggle("on",stage==="m");
+  $("qStage").querySelector(".l").classList.toggle("on",stage==="l");
+  $("qOpts").innerHTML="";
+  shuffled[qi].forEach((k,i)=>{
+    const b=document.createElement("button");b.type="button";
+    b.className="opt"+(a.m===k?" most":"");
+    b.innerHTML=`<kbd>${i+1}</kbd><span></span>`+(a.m===k?`<em class="badge" style="background:var(--S)">PALING</em>`:"");
+    b.querySelector("span").textContent=it.o[k];
+    if(a.m===k) b.disabled=true;
+    b.onclick=()=>pick(k);$("qOpts").appendChild(b);
+  });
+  $("bBack").style.visibility=(qi||a.m)?"visible":"hidden";
+}
+function pick(k){
+  const a=answers[qi];
+  if(!a.m){a.m=k;renderQ();return}
+  if(k===a.m)return;
+  a.l=k;
+  if(qi<ITEMS.length-1){qi++;answers[qi]={m:null,l:null};renderQ()}else{$("qBar").style.width="100%";renderResult()}
+}
+$("bBack").onclick=()=>{
+  const a=answers[qi];
+  if(a.m){a.m=null;a.l=null;renderQ();return}
+  if(qi>0){qi--;answers[qi]={m:null,l:null};renderQ()}
+};
+document.addEventListener("keydown",e=>{
+  if($("scrQuiz").classList.contains("hidden"))return;
+  const n=+e.key; if(n>=1&&n<=4) pick(shuffled[qi][n-1]);
+});
+
+function compute(){
+  const M={D:0,I:0,S:0,C:0},L={D:0,I:0,S:0,C:0},n=answers.length;
+  answers.forEach(a=>{M[a.m]++;L[a.l]++});
+  const p={}; ORDER.forEach(k=>p[k]=Math.round((M[k]-L[k]+n)/(2*n)*100));
+  // konsisten: bandingkan soalan semakan dengan soalan asal
+  let match=0,tot=0;
+  ITEMS.forEach((it,i)=>{if(it.ref===undefined)return;const o=answers[baseIdx[it.ref]],c=answers[i];tot+=2;if(o.m===c.m)match++;if(o.l===c.l)match++});
+  const cons={match,tot};
+  const raw=DEPTS.map(d=>{let s=0,w=0;for(const k in d.w){s+=d.w[k]*p[k];w+=d.w[k]}return s/w});
+  const mx=Math.max(...raw)||1;
+  const dept=DEPTS.map((d,i)=>({...d,score:Math.round(raw[i]/mx*100)}));
+  const rank=ORDER.slice().sort((a,b)=>p[b]-p[a]);
+  return {p,dept,rank,cons};
+}
+
+function radarSVG(dept){
+  const W=420,H=380,cx=W/2,cy=H/2,R=130;
+  const pt=(ang,r)=>[cx+r*Math.cos(ang*Math.PI/180),cy+r*Math.sin(ang*Math.PI/180)];
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Carta radar 6 jabatan">`;
+  // halves
+  s+=`<text x="${cx-150}" y="22" fill="#a39d88" font-family="JetBrains Mono" font-size="10" letter-spacing="1.5">URUS BISNES</text>`;
+  s+=`<text x="${cx+150}" y="22" text-anchor="end" fill="#a39d88" font-family="JetBrains Mono" font-size="10" letter-spacing="1.5">BUAT BISNES</text>`;
+  s+=`<line x1="${cx}" y1="30" x2="${cx}" y2="${H-20}" stroke="#2e2a1c" stroke-dasharray="3 4"/>`;
+  [.25,.5,.75,1].forEach(f=>{
+    const poly=DEPTS.map(d=>pt(d.ang,R*f).join(",")).join(" ");
+    s+=`<polygon points="${poly}" fill="none" stroke="#2e2a1c" stroke-width="1"/>`;
+  });
+  [25,50,75,100].forEach(v=>{const[x,y]=pt(-90,R*v/100);s+=`<text x="${x+4}" y="${y+3}" fill="#6f6a58" font-family="JetBrains Mono" font-size="9">${v}</text>`});
+  DEPTS.forEach(d=>{const[x,y]=pt(d.ang,R);s+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#2e2a1c"/>`});
+  const poly=dept.map(d=>pt(d.ang,R*Math.max(d.score,4)/100).join(",")).join(" ");
+  s+=`<polygon points="${poly}" fill="rgba(242,183,5,.18)" stroke="#f2b705" stroke-width="2"/>`;
+  dept.forEach(d=>{
+    const[x,y]=pt(d.ang,R*Math.max(d.score,4)/100);s+=`<circle cx="${x}" cy="${y}" r="4" fill="#f2b705"/>`;
+    const[lx,ly]=pt(d.ang,R+30);
+    const anchor=Math.abs(d.ang)===180?"end":d.ang===0?"start":"middle";
+    const ax=anchor==="end"?lx+14:anchor==="start"?lx-14:lx;
+    s+=`<text x="${ax}" y="${ly}" text-anchor="${anchor}" fill="#f4efe0" font-family="DM Sans" font-weight="700" font-size="13">${d.n}</text>`;
+    s+=`<text x="${ax}" y="${ly+15}" text-anchor="${anchor}" fill="#f2b705" font-family="JetBrains Mono" font-weight="700" font-size="11">${d.score}</text>`;
+  });
+  return s+"</svg>";
+}
+
+function quadSVG(p){
+  const W=360,H=300,cx=W/2,cy=H/2;
+  const cl=v=>Math.max(-1,Math.min(1,v));const x=cl(((p.I+p.S)-(p.D+p.C))/120), y=cl(((p.D+p.I)-(p.S+p.C))/120);
+  const px=cx+x*130, py=cy-y*110;
+  const q=(tx,ty,t,c,anc)=>`<text x="${tx}" y="${ty}" text-anchor="${anc}" fill="${c}" font-family="Bricolage Grotesque" font-weight="700" font-size="15">${t}</text>`;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Peta kuadran DISC">`;
+  s+=`<rect x="0" y="0" width="${W}" height="${H}" fill="none"/>`;
+  s+=`<line x1="10" y1="${cy}" x2="${W-10}" y2="${cy}" stroke="#4a4430"/><line x1="${cx}" y1="10" x2="${cx}" y2="${H-10}" stroke="#4a4430"/>`;
+  s+=q(20,34,"Eagle / Dominant","#e5484d","start")+q(W-20,34,"Peacock / Influence","#f2b705","end");
+  s+=q(20,H-22,"Owl / Conscientious","#3e9bd6","start")+q(W-20,H-22,"Dove / Steadiness","#46b37a","end");
+  s+=`<text x="${cx}" y="${cy-8}" text-anchor="start" fill="#6f6a58" font-family="JetBrains Mono" font-size="9" dx="10" dy="-130">PANTAS</text>`;
+  s+=`<circle cx="${px}" cy="${py}" r="18" fill="rgba(242,183,5,.18)"/><circle cx="${px}" cy="${py}" r="7" fill="#f2b705" stroke="#0b0a07" stroke-width="2"/>`;
+  s+=`<text x="${W-14}" y="${cy-6}" text-anchor="end" fill="#6f6a58" font-family="JetBrains Mono" font-size="9">ORANG →</text>`;
+  s+=`<text x="14" y="${cy-6}" fill="#6f6a58" font-family="JetBrains Mono" font-size="9">← TUGAS</text>`;
+  s+=`<text x="${cx+6}" y="${H-44}" fill="#6f6a58" font-family="JetBrains Mono" font-size="9">BERHATI-HATI</text>`;
+  return s+"</svg>";
+}
+
+let summary="";
+function renderResult(){
+  const {p,dept,rank,cons}=compute();
+  const a=T[rank[0]], b=T[rank[1]];
+  $("rNama").textContent=cand.nama;
+  $("rJaw").textContent=[cand.jaw,cand.jab].filter(Boolean).join(" · ")||"Belum dinyatakan";
+  $("rDate").textContent=new Date().toLocaleDateString("ms-MY",{day:"numeric",month:"long",year:"numeric"});
+  $("radar").innerHTML=radarSVG(dept);
+  $("quad").innerHTML=quadSVG(p);
+  $("rPill").textContent=`${a.disc} + ${a.bird}`;
+  $("rPill").style.cssText=`background:${a.hex}22;color:${a.hex};border:1px solid ${a.hex}55`;
+  $("rType").innerHTML=`${a.bird} <span style="color:var(--muted);font-weight:600">dengan sokongan</span> ${b.bird}`;
+  $("rDesc").textContent=a.desc;
+  $("rBars").innerHTML=rank.map(k=>`<div class="bar"><span>${T[k].disc}</span><div class="t"><i style="width:${p[k]}%;background:${T[k].color}"></i></div><span class="v">${p[k]}</span></div>`).join("");
+
+  const sorted=dept.slice().sort((x,y)=>y.score-x.score);
+  const top=sorted[0], second=sorted[1];
+  // fit with applied dept
+  if(cand.jab){
+    const d=dept.find(x=>x.n===cand.jab), pos=sorted.indexOf(d)+1;
+    var fitTxt;const lvl=pos<=2?["Sangat Sesuai","var(--S)"]:pos<=4?["Sesuai dengan Bimbingan","var(--I)"]:["Kurang Sesuai","var(--D)"];
+    $("rFit").style.cssText=`background:var(--panel2);border:1px solid ${lvl[1]}`;
+    $("rFit").innerHTML=`<span class="pill" style="background:${lvl[1]};color:#111">${lvl[0]}</span><span>Jabatan dipohon <b>${cand.jab}</b> berada di kedudukan <b>#${pos}</b> daripada 6 (skor ${d.score}).</span>`;
+    fitTxt=`${lvl[0]} (#${pos})`;
+  } else {
+    $("rFit").style.cssText="background:var(--panel2)";
+    $("rFit").innerHTML=`<span class="muted">Tiada jabatan dipohon. Rujuk cadangan penempatan di bawah.</span>`;
+  }
+  const cr=cons.match/cons.tot;
+  const cl=cr>=.75?["Konsisten","var(--S)","Jawapan soalan semakan sepadan dengan soalan asal."]:cr>=.5?["Sederhana","var(--I)","Ada sedikit percanggahan. Sahkan profil ini semasa temu duga."]:["Kurang Konsisten","var(--D)","Banyak jawapan bercanggah. Calon mungkin menjawab secara rawak atau tergesa-gesa."];
+  $("rCons").style.cssText=`background:var(--panel2);border:1px solid ${cl[1]}`;
+  $("rCons").innerHTML=`<span class="pill" style="background:${cl[1]};color:#111">${cl[0]}</span><span>Semakan konsisten <b>${cons.match}/${cons.tot}</b>. ${cl[2]}</span>`;
+  $("rTop").innerHTML=`<div class="big" style="font-size:28px">${top.n}</div>
+    <p class="muted" style="margin-top:4px">Pilihan kedua: <b style="color:var(--ink)">${second.n}</b>. ${top.n} berada di sisi <b style="color:var(--ink)">${top.side}</b> dan mengawal elemen <b style="color:var(--ink)">${top.el}</b>, sepadan dengan kekuatan ${a.bird} calon.</p>`;
+  $("rManage").innerHTML=`<b style="color:var(--gold)">Cara urus calon ini:</b> ${a.manage}`;
+
+  $("rDepts").innerHTML=sorted.map((d,i)=>`<div class="dept ${i===0?"top":""}">
+    <div class="hd"><b>${d.n}</b><span>${d.score}</span></div>
+    <div class="tag">${d.side} · ${d.el}</div>
+    <small>KPI: ${d.kpi}</small>
+    <small>Profil ideal: ${Object.keys(d.w).sort((x,y)=>d.w[y]-d.w[x]).map(k=>T[k].bird).join(", ")}</small>
+  </div>`).join("");
+
+  $("rTypes").innerHTML=rank.map(k=>{const t=T[k];return `<div class="type" style="--c:${t.hex}">
+    <div class="hd"><b>${t.disc} + ${t.bird}</b><span>${p[k]}</span></div>
+    <p>${t.desc}</p>
+    <div class="kc"><div><h4>KELEBIHAN</h4><ul>${t.plus.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+    <div><h4>CABARAN</h4><ul>${t.minus.map(x=>`<li>${x}</li>`).join("")}</ul></div></div></div>`}).join("");
+
+  sendToSheet({
+    tarikh:new Date().toISOString(), nama:cand.nama, jabatan:cand.jab||"-", jawatan:cand.jaw||"-",
+    profil:`${a.disc} + ${a.bird}`, sokongan:`${b.disc} + ${b.bird}`,
+    D:p.D, I:p.I, S:p.S, C:p.C,
+    Admin:dept[0].score, Sales:dept[1].score, Marketing:dept[2].score, Operation:dept[3].score, Finance:dept[4].score, HR:dept[5].score,
+    cadangan1:top.n, cadangan2:second.n, kesesuaian:(typeof fitTxt!=="undefined"&&fitTxt)||"-",
+    konsisten:`${cons.match}/${cons.tot} (${cl[0]})`,
+    jawapan:answers.map(x=>x.m+x.l).join(" ")
+  });
+  summary=`Asesmen Bakat Kerjaya
+Calon: ${cand.nama}
+Permohonan: ${$("rJaw").textContent}
+Profil: ${a.disc} + ${a.bird} (sokongan ${b.bird})
+DISC: ${rank.map(k=>`${k} ${p[k]}`).join(" · ")}
+Roda: ${sorted.map(d=>`${d.n} ${d.score}`).join(" · ")}
+Cadangan: ${top.n}, kemudian ${second.n}
+Konsisten: ${cons.match}/${cons.tot} (${cl[0]})`;
+  $("copyBox").classList.add("hidden");$("copyMsg").textContent="";
+  show("scrResult","Keputusan");
+}
+
+function sendToSheet(data){
+  const m=$("sheetMsg");
+  if(isSample||!SHEET_URL){m.textContent="";return}
+  m.textContent="Menghantar ke Google Sheet...";
+  fetch(SHEET_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)})
+    .then(()=>{m.textContent="Keputusan dihantar ke Google Sheet."})
+    .catch(()=>{m.textContent="Gagal hantar ke Google Sheet. Semak sambungan internet atau URL Web App."});
+}
+$("bCopy").onclick=()=>{
+  const done=()=>$("copyMsg").textContent="Ringkasan disalin.";
+  const fallback=()=>{const t=$("copyBox");t.value=summary;t.classList.remove("hidden");t.select();$("copyMsg").textContent="Salin teks di bawah."};
+  try{navigator.clipboard.writeText(summary).then(done,fallback)}catch(e){fallback()}
+};
+$("bNew").onclick=()=>{$("fIntro").reset();show("scrIntro","Maklumat Calon")};
+</script>
+
+</body>
+</html>
